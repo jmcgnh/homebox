@@ -571,6 +571,11 @@
 - name: Add a script to edit users
   tags: script
   template:
-    src: ldap-user-edit
-    dest: /usr/local/sbin/ldap-user-edit
+    src: '{{ script }}'
+    dest: '/usr/local/sbin/{{ script }}'
     mode: 0700
+  with_items:
+    - ldap-user-edit
+    - ldap-user-delete
+  loop_control:
+    loop_var: script
