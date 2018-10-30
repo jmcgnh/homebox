@@ -194,7 +194,15 @@
   loop_control:
     loop_var: line
 
+- name: Check if the system is online
+  register: ping
+  shell: >-
+    ping -q -c 1 -W 2 8.8.8.8 2>&1 >/dev/null
+    && echo online
+    || echo offline
+
 - name: Run the certificate renewal script if needed
+  when: ping.stdout == 'online'
   shell: certbot renew
 
 # In this direction, we should overwrite the symbolic links,
