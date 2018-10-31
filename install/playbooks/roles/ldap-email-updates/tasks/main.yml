@@ -9,7 +9,7 @@
     values: '{{ user.1.aliases | default([]) }}'
     state: exact
   with_indexed_items:
-    - '{{ users }}'
+    - '{{ users | selectattr("state", "equalto", "active") | list }}'
   loop_control:
     loop_var: user
 
@@ -22,7 +22,7 @@
     values: '{{ user.1.mail }}'
     state: exact
   with_indexed_items:
-    - '{{ users }}'
+    - '{{ users | selectattr("state", "equalto", "active") | list }}'
   loop_control:
     loop_var: user
 
@@ -36,7 +36,21 @@
     values: '{{ user.uid }}'
     state: present
   with_items:
-    - '{{ users }}'
+    - '{{ users | selectattr("state", "equalto", "active") | list }}'
+  loop_control:
+    loop_var: user
+
+- name: Make sure the disabled accounts cannot login
+  tags: groups
+  ldap_attr:
+    bind_dn: '{{ ldap.admin.dn }}'
+    bind_pw: '{{ lookup("password", ldap.adminPasswdParams) }}'
+    dn: 'cn={{ user.1.cn }},{{ ldap.users.dn }}'
+    name: loginShell
+    values: /usr/sbin/nologin
+    state: exact
+  with_indexed_items:
+    - '{{ users | selectattr("state", "equalto", "disabled") | list }}'
   loop_control:
     loop_var: user
 
