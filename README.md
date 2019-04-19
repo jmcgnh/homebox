@@ -1,3 +1,5 @@
+THIS IS A FORK. See progmaticltd/homebox for original.
+
 A set of Ansible scripts to setup a secure email and personal files server. This project is for you if:
 
 - You are interested to host your emails yourself, for privacy, security or any other reason.
